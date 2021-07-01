@@ -3,6 +3,20 @@ from django.shortcuts import get_object_or_404, render
 from django.views.generic import ListView
 
 from .models import Post
+from .forms import EmailPostForm
+
+
+def post_share(request, post_id):
+    template_name = 'blog/post/share.html'
+    post = get_object_or_404(Post, post_id, status='published')
+    if request.method == 'POST':
+        form = EmailPostForm(request.POST)
+        if form.is_valid():
+            cd = form.cleaned_data
+    else:
+        form = EmailPostForm()
+    return render(request, template_name, {'post': post, 'form': form})
+
 
 class PostListView(ListView):
     queryset = Post.objects_published.all()
